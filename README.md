@@ -146,6 +146,92 @@ Abaixo temos uma tabela comparativa entre o sistema desenvolvido neste trabalho 
 | Garante a entrega da mensagem | Sim               | Não               | Não               |
 | Garante a ordem das mensagens | Sim               | Não               | Não               |
 
+## 3.7 Desenvolvimento e arquitetura da aplicação
+
+A linguagem escolhida para o desenvolvimento da aplicação foi a linguagem Go, por se tratar de uma linguagem compilada, com gerenciamento de memória e de simples compreensão. O Go conta com estruturas primitivas de concorrência como rotinas de _background_ e canais de comunicação para envio de dados e sincronização de threads, pontos cruciais para o desenvolvimento de uma aplicação que lida com larga escala de dados e concorrência.
+
+Durante o desenvolvimento, um dos principais pontos de atenção era o desempenho e eficiência da aplicação, uma vez que ela lida com uma grande quantidade de dados e precisa ser escalável. Para isso, foram realizados testes de desempenho para avaliar estruturas alternativas de concorrência e distribuição de mensagens.
+
+A primeira alternativa foi utilizar uma estrutura de distribuição de dados no padrão _broadcast_, onde um canal central distribuí as mensagens para os clientes conectados de maneira síncrona. Apesar de ser de fácil compreensão ela se mostrou ineficiente para o propósito da aplicação, uma vez que chamadas bloqueantes de escrita entre diferentes threads resultava em um decréscimo de performance conforme o número de clientes aumentava na aplicação.
+
+Foram realizados outros testes com essa mesma estrutura, realizando a escrita das mensagens em uma thread de execução separada, para o aumento da performance. Isso resultou em uma melhora da performance, entretanto o custo dessa alternativa foi o aumento de utilização de recursos computacionais. O aumento do número de threads de execução resultou em um custo de consumo de memória e processamento, em especial, para o runtime da própria linguagem. Com a execução de mais threads e mais alocação de memória, o runtime passou a consumir mais recursos computacionais para gerenciar os recursos utilizados pela aplicação, resultando em lentidão para desalocação de recursos.
+
+A estrutura mais eficiente para o nosso caso de uso foi a distribuição de mensagens através de um "broker". Um broker de mensagens é uma estrutura responsável por armazenar e distribuir mensagens para os respectivos clientes. Essa estrutura é utilizada em sistemas de mensageria como o Apache Kafka, e se mostrou eficiente para o nosso caso de uso. A estrutura de broker de mensagens é composta por um servidor de mensageria, responsável por receber as mensagens e distribuí-las para os clientes conectados. Essa estrutura é mais eficiente para o nosso caso de uso, uma vez que a distribuição de mensagens é feita de maneira assíncrona, e o servidor de mensageria é responsável por gerenciar a distribuição de mensagens para os clientes conectados.
+
+A estrutura de broker na aplicação consiste em uma estrutura de dados que possui uma fila interna de mensagens que é alterada quando uma requisição de publicação para um determinado tópico é realizada. Essa fila armazena as mensagens para serem consumidas pelos clientes posteriormente. O broker executa a distribuição de mensagens removendo os primeiros items que foram adicionados na fila e distribuindo para os clientes conectados no tópico.
+
+Essa estrutura se mostrou muito eficiente para a aplicação, resultando em uma melhora significativa da performance. Por se tratar de uma distribuição assíncrona, a estrutura pode armazenar as mensagens em uma fila interna e distribuir para os clientes conectados posteriormente, contrário a estrutura de _broadcast_, essa alternativa pode distribuir mensagens em batches, reduzindo operações de sincronização na aplicação e chamadas do sistema operacional para escrever nos sockets dos clientes conectados.
+
+## 4. Resultados, análise e discussão
+
+Os testes de desempenho foram realizados utilizando a ferramenta [wrk](https://github.com/wg/wrk) para requisições HTTP e um cliente SSE desenvolvido em Go para simular os clientes. Os testes foram realizados em um computador com processador Intel I5-1210U e 16GB de memória RAM, utilizando o sistema operacional Linux Ubuntu 22.04.
+
+## 4.1 Testes de desempenho
+
+Os testes foram realizados em pequenas baterias, com diferentes quantidades de clientes conectados, aplicações e linguagens de programação diferentes. Contando com implementações em NodeJS e Python. Os testes consistem em 5 baterias, contando com 50, 100, 500, 1000 e 2000 conexões para cada servidor. Cada bateria consiste em um teste de carga com intervalo de 10 segundos para cada aplicação, onde o intuito foi medir a quantidade de requisições por segundo e a utilização de recursos da máquina. Os resultados são apresentados na tabela abaixo
+
+| Linguagem  | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
+| ---------- | ------------------ | ----------------------- | ----------------- | --------------------- |
+| Python     | 50                 | x                       | x                 | x                     |
+| Javascript | 50                 | x                       | x                 | x                     |
+| Go         | 50                 | x                       | x                 | x                     |
+| Python     | 100                | x                       | x                 | x                     |
+| Javascript | 100                | x                       | x                 | x                     |
+| Go         | 100                | x                       | x                 | x                     |
+| Python     | 500                | x                       | x                 | x                     |
+| Javascript | 500                | x                       | x                 | x                     |
+| Go         | 500                | x                       | x                 | x                     |
+| Python     | 1000               | x                       | x                 | x                     |
+| Javascript | 1000               | x                       | x                 | x                     |
+| Go         | 1000               | x                       | x                 | x                     |
+| Python     | 2000               | x                       | x                 | x                     |
+| Javascript | 2000               | x                       | x                 | x                     |
+| Go         | 2000               | x                       | x                 | x                     |
+
+## 4.2 Testes de integração
+
+Realizamos também testes de integração da aplicação foram desenvolvidas 3 demonstrações, para exemplificar os modelos arquiteturais descritos e a performance de cada um:
+
+- Aplicação 1: NodeJS monolítica, responsável por gerenciar os tópicos e distribuir as mensagens para os clientes conectados;
+- Aplicação 2: NodeJS utilizando um sistema de mensageria (Redis) para distribuição de mensagens;
+- Aplicação 3: NodeJS utilizando o serviço de mensageria descrito neste trabalho;
+
+Assim como no teste anterior, cada bateria consiste em um teste de carga com intervalo de 10 segundos para cada aplicação, onde o intuito foi medir a quantidade de requisições por segundo e a utilização de recursos da máquina, com a quantidade de clientes conectados sendo 50, 100, 500 e 1000 respectivamente.
+
+Os resultados do teste de integração são apresentados na tabela abaixo:
+
+## 4.2.1 Primeira bateria de testes - 50 conexões
+
+| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
+| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
+| Aplicação 1 | 50                 | x                       | x                 | x                     |
+| Aplicação 2 | 50                 | x                       | x                 | x                     |
+| Aplicação 3 | 50                 | x                       | x                 | x                     |
+
+## 4.2.2 Segunda bateria de testes - 100 conexões
+
+| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
+| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
+| Aplicação 1 | 100                | x                       | x                 | x                     |
+| Aplicação 2 | 100                | x                       | x                 | x                     |
+| Aplicação 3 | 100                | x                       | x                 | x                     |
+
+## 4.2.3 Terceira bateria de testes - 500 conexões
+
+| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
+| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
+| Aplicação 1 | 500                | x                       | x                 | x                     |
+| Aplicação 2 | 500                | x                       | x                 | x                     |
+| Aplicação 3 | 500                | x                       | x                 | x                     |
+
+## 4.2.4 Quarta bateria de testes - 1000 conexões
+
+| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
+| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
+| Aplicação 1 | 1000               | x                       | x                 | x                     |
+| Aplicação 2 | 1000               | x                       | x                 | x                     |
+| Aplicação 3 | 1000               | x                       | x                 | x                     |
+
 ## Desenvolvimento (Tarefas)
 
 - [x] Finalização do modelo de arquitetura do sistema;
@@ -164,8 +250,8 @@ Abaixo temos uma tabela comparativa entre o sistema desenvolvido neste trabalho 
 ## Tarefas (escrita)
 
 - [ ] Resultados, análise e discussão:
-  - [ ] Finalização da implementação do sistema;
-  - [ ] Aplicações demo para testes de desempenho;
+  - [x] Finalização da implementação do sistema;
+  - [x] Aplicações demo para testes de desempenho;
   - [ ] Dados dos testes de desempenho;
   - [ ] Análise dos dados dos testes de desempenho;
   - [ ] Discussão dos resultados (quantitativo): performance do sistema e escalabilidade;
