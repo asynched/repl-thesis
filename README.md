@@ -168,25 +168,43 @@ Os testes de desempenho foram realizados utilizando a ferramenta [wrk](https://g
 
 ## 4.1 Testes de desempenho
 
-Os testes foram realizados em pequenas baterias, com diferentes quantidades de clientes conectados, aplicações e linguagens de programação diferentes. Contando com implementações em NodeJS e Python. Os testes consistem em 5 baterias, contando com 50, 100, 500, 1000 e 2000 conexões para cada servidor. Cada bateria consiste em um teste de carga com intervalo de 10 segundos para cada aplicação, onde o intuito foi medir a quantidade de requisições por segundo e a utilização de recursos da máquina. Os resultados são apresentados na tabela abaixo
+Os testes foram realizados em pequenas baterias, com diferentes quantidades de clientes conectados, aplicações e linguagens de programação diferentes. Contando com implementações em NodeJS e Python. Os testes consistem em 5 baterias, contando com 50, 100, 500, 1000 e 2000 conexões para cada servidor. Cada bateria consiste em um teste de carga com intervalo de 10 segundos para cada aplicação, onde o intuito foi medir a quantidade de mensagens publicadas por segundo, latência e utilização de recursos da máquina. Esse teste é demonstrativo e compara a performance da aplicação desenvolvida em modo stand-alone, executando em uma única máquina.
 
-| Linguagem  | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
-| ---------- | ------------------ | ----------------------- | ----------------- | --------------------- |
-| Python     | 50                 | x                       | x                 | x                     |
-| Javascript | 50                 | x                       | x                 | x                     |
-| Go         | 50                 | x                       | x                 | x                     |
-| Python     | 100                | x                       | x                 | x                     |
-| Javascript | 100                | x                       | x                 | x                     |
-| Go         | 100                | x                       | x                 | x                     |
-| Python     | 500                | x                       | x                 | x                     |
-| Javascript | 500                | x                       | x                 | x                     |
-| Go         | 500                | x                       | x                 | x                     |
-| Python     | 1000               | x                       | x                 | x                     |
-| Javascript | 1000               | x                       | x                 | x                     |
-| Go         | 1000               | x                       | x                 | x                     |
-| Python     | 2000               | x                       | x                 | x                     |
-| Javascript | 2000               | x                       | x                 | x                     |
-| Go         | 2000               | x                       | x                 | x                     |
+### 4.1.1 Tabela de performance do NodeJS
+
+| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/ms) | CPU   | Memória |
+| -------- | ------------------ | ------------------- | ------------- | ----- | ------- |
+| 50       | 9.601              | 1.1s                | 890           | 37.3% | 0.4%    |
+| 100      | 6.818              | 1.4s                | 720           | 70.1% | 0.5%    |
+| 500      | 1.475              | 6.2s                | 160           | 84.9% | 0.5%    |
+| 1000     | 765                | 12.9                | 77            | 87%   | 0.6%    |
+| 2000     | 386                | 25s                 | 38            | 93.3% | 0.7%    |
+
+### 4.1.2 Tabela de performance do Python
+
+| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/ms) | CPU   | Memória |
+| -------- | ------------------ | ------------------- | ------------- | ----- | ------- |
+| 50       | 2.044              | 1.8s                | 550           | 31.3% | 0.3%    |
+| 100      | 1.618              | 2.5s                | 400           | 55.4% | 0.3%    |
+| 500      | 700                | 8.7s                | 113           | 81.8% | 0.3%    |
+| 1000     | 383                | 19.3s               | 52            | 93.8% | 0.4%    |
+| 2000     | 198                | 41s                 | 24            | 96.9% | 0.6%    |
+
+### 4.1.3 Tabela comparativa de performance do REPL
+
+| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/ms) | CPU    | Memória |
+| -------- | ------------------ | ------------------- | ------------- | ------ | ------- |
+| 50       | 106.598            | 0.1s                | 10.000        | 144.0% | 3%      |
+| 100      | 56.927             | 0.1s                | 10.000        | 231%   | 1.8%    |
+| 500      | 9.534              | 0.15s               | 6.666         | 356%   | 0.4%    |
+| 1000     | 4.666              | 0.3s                | 3.333         | 300%   | 0.6%    |
+| 2000     | 2.514              | 0.6s                | 1.666         | 268%   | 1.1%    |
+
+## 4.1.4 Gráficos de performance
+
+| Requisições por segundo                    | Latência                        | Taxa de mensagens                     |
+| ------------------------------------------ | ------------------------------- | ------------------------------------- |
+| ![Requisições por segundo](charts/rps.png) | ![Latência](charts/latency.png) | ![Taxa de mensagens](charts/rate.png) |
 
 ## 4.2 Testes de integração
 
