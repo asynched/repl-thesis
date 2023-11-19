@@ -38,7 +38,7 @@ A escalabilidade horizontal vem com seus próprios desafios, em especial para ap
 
 Para aplicações distribuídas, a escalabilidade horizontal facilita o aumento de poder computacional, sendo necessário apenas adicionar mais servidores em um _cluster_. Porém, esse tipo de escalabilidade apresenta um desafio para servidores que necessitam manter conexão com o cliente, como é o caso das aplicações web em tempo real. Nesses casos, é comum ver arquiteturas como na da imagem abaixo.
 
-![Sistema distribuído com mensageria](Sistema%20distribuído%20RT.png)
+![Sistema distribuído com mensageria](architectures/rt-messaging.png)
 
 Nesse tipo de arquitetura, utiliza-se um serviço de mensageria para notificar servidores de atualização de estado, para que ele possa distribuir isso para outras máquinas conectadas em um cluster. Essa é uma das estratégias que serviços que se utilizam de atualizações em tempo real implementam.
 
@@ -48,7 +48,7 @@ Essa é uma abordagem válida, porém adiciona complexidade na implementação d
 
 O intuito da aplicação desenvolvida nesse trabalho é simplificar a complexidade da arquitetura necessária para desenvolver aplicações em tempo real para a web. Adicionando um único serviço de mensageria, responsável por receber as atualizações da aplicação e distribuí-la entre os clientes conectados.
 
-![Sistema distribuído](Sistema%20distribuído%20REPL.png)
+![Sistema distribuído](architectures/repl.png)
 
 A distribuição das mensagens é feita através de tópicos, onde cada tópico é responsável por um tipo de mensagem. Os clientes podem se inscrever em um ou mais tópicos, e o serviço de mensageria distribuí as mensagens para os clientes inscritos em cada tópico. Essa abordagem simplifica a implementação de serviços em tempo real, uma vez que para notificar clientes conectados de uma atualização, é necessário somente a publicação de uma mensagem para um tópico.
 
