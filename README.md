@@ -150,6 +150,12 @@ Abaixo temos uma tabela comparativa entre o sistema desenvolvido neste trabalho 
 
 A linguagem escolhida para o desenvolvimento da aplicação foi a linguagem Go, por se tratar de uma linguagem compilada, com gerenciamento de memória e de simples compreensão. O Go conta com estruturas primitivas de concorrência como rotinas de _background_ e canais de comunicação para envio de dados e sincronização de threads, pontos cruciais para o desenvolvimento de uma aplicação que lida com larga escala de dados e concorrência.
 
+A aplicação pode ser executada em dois modos, sendo eles _standalone_ e em cluster. Em modo stand-alone a aplicação executa em uma única máquina, nesse modo a performance com relação a publicação de mensagens é maior do que em modo cluster, pois não necessita de distribuição e replicação de mensagens entre máquinas.
+
+Em modo cluster a aplicação executa em várias máquinas, e é possível adicionar mais nós ao cluster. Nesse modo a aplicação conta com um processo de replicação de mensagens entre os nós utilizando o Raft como protocolo de consenso, garantindo a consistência entre os nós e a entrega das mensagens para os tópicos. Cada um dos modos conta com prós e contras, sendo o modo stand-alone mais eficiente para publicação de mensagens, e o modo cluster suportando mais conexões.
+
+## 3.7.1 Estruturas de distribuição de mensagens
+
 Durante o desenvolvimento, um dos principais pontos de atenção era o desempenho e eficiência da aplicação, uma vez que ela lida com uma grande quantidade de dados e precisa ser escalável. Para isso, foram realizados testes de desempenho para avaliar estruturas alternativas de concorrência e distribuição de mensagens.
 
 A primeira alternativa foi utilizar uma estrutura de distribuição de dados no padrão _broadcast_, onde um canal central distribuí as mensagens para os clientes conectados de maneira síncrona. Apesar de ser de fácil compreensão ela se mostrou ineficiente para o propósito da aplicação, uma vez que chamadas bloqueantes de escrita entre diferentes threads resultava em um decréscimo de performance conforme o número de clientes aumentava na aplicação.
@@ -161,6 +167,20 @@ A estrutura mais eficiente para o nosso caso de uso foi a distribuição de mens
 A estrutura de broker na aplicação consiste em uma estrutura de dados que possui uma fila interna de mensagens que é alterada quando uma requisição de publicação para um determinado tópico é realizada. Essa fila armazena as mensagens para serem consumidas pelos clientes posteriormente. O broker executa a distribuição de mensagens removendo os primeiros items que foram adicionados na fila e distribuindo para os clientes conectados no tópico.
 
 Essa estrutura se mostrou muito eficiente para a aplicação, resultando em uma melhora significativa da performance. Por se tratar de uma distribuição assíncrona, a estrutura pode armazenar as mensagens em uma fila interna e distribuir para os clientes conectados posteriormente, contrário a estrutura de _broadcast_, essa alternativa pode distribuir mensagens em batches, reduzindo operações de sincronização na aplicação e chamadas do sistema operacional para escrever nos sockets dos clientes conectados.
+
+### 3.7.2 Análise de performance e otimizações
+
+Um dos principais pontos de atenção durante o desenvolvimento da aplicação foi a performance de distribuição das mensagens para os clientes conectados. Para isso, foram realizados testes de desempenho para avaliar a performance da aplicação e identificar gargalos de performance, entretanto, também foram necessárias inspeções no funcionamento da aplicação, como análise de CPU e análise de alocação de memória durante a execução da aplicação.
+
+A técnica utilizada para inspeção da aplicação é foi a chamada _profiling_, ela consiste de executar a aplicação em um ambiente de testes e gerar relatórios de performance durante a execução da aplicação. Para isso, foram utilizadas ferramentas de profiling da própria linguagem Go, como o _pprof_ e o _trace_, que são ferramentas de profiling nativas da linguagem. Essas ferramentas são capazes de gerar relatórios de performance enquanto a aplicação é executada, com esses relatórios é possível ver métricas úteis para a otimização do código, como alocação de memória e tempo de execução de funções.
+
+![Profiling da memória](images/heap-profile.jpeg)
+
+A partir dos relatórios gerados pelo _profiling_ da aplicação foi possível analisar e otimizar pontos que prejudicavam a performance. O ponto principal de otimização foi com relação a chamadas do sistema operacional (_syscalls_), observando a performance de cada chamada e otimizando o código para reduzir o número de chamadas.
+
+Além das chamadas de sistema operacional também foram otimizadas operações dentro da aplicação, como operações de serializar JSON. Durante os teste foi identificado que a escrita de mensagens para os clientes realizava operações de transformar uma estrutura de dados para uma string por $N$ iterações para $N$ clientes, resultando em uma complexidade assintótica de $O(n^2)$.
+
+A solução interna para esse problema de performance foi de publicar as mensagens, que anteriormente eram estruturas de dados, diretamente em formato de strings para o broker, removendo assim a necessidade da aplicação de serializar as mensagens para cada cliente conectado. Essa otimização resultou em uma melhora significativa da performance, em especial para os casos onde o servidor possuía uma grande quantidade de clientes conectados.
 
 ## 4. Resultados, análise e discussão
 
