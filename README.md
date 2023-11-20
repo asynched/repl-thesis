@@ -192,33 +192,33 @@ Os testes foram realizados em pequenas baterias, com diferentes quantidades de c
 
 ### 4.1.1 Tabela de performance do NodeJS
 
-| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/ms) | CPU   | Memória |
-| -------- | ------------------ | ------------------- | ------------- | ----- | ------- |
-| 50       | 9.601              | 1.1s                | 890           | 37.3% | 0.4%    |
-| 100      | 6.818              | 1.4s                | 720           | 70.1% | 0.5%    |
-| 500      | 1.475              | 6.2s                | 160           | 84.9% | 0.5%    |
-| 1000     | 765                | 12.9                | 77            | 87%   | 0.6%    |
-| 2000     | 386                | 25s                 | 38            | 93.3% | 0.7%    |
+| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/s) | CPU   | Memória |
+| -------- | ------------------ | ------------------- | ------------ | ----- | ------- |
+| 50       | 9.601              | 1.1s                | 890          | 37.3% | 0.4%    |
+| 100      | 6.818              | 1.4s                | 720          | 70.1% | 0.5%    |
+| 500      | 1.475              | 6.2s                | 160          | 84.9% | 0.5%    |
+| 1000     | 765                | 12.9                | 77           | 87%   | 0.6%    |
+| 2000     | 386                | 25s                 | 38           | 93.3% | 0.7%    |
 
 ### 4.1.2 Tabela de performance do Python
 
-| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/ms) | CPU   | Memória |
-| -------- | ------------------ | ------------------- | ------------- | ----- | ------- |
-| 50       | 2.044              | 1.8s                | 550           | 31.3% | 0.3%    |
-| 100      | 1.618              | 2.5s                | 400           | 55.4% | 0.3%    |
-| 500      | 700                | 8.7s                | 113           | 81.8% | 0.3%    |
-| 1000     | 383                | 19.3s               | 52            | 93.8% | 0.4%    |
-| 2000     | 198                | 41s                 | 24            | 96.9% | 0.6%    |
+| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/s) | CPU   | Memória |
+| -------- | ------------------ | ------------------- | ------------ | ----- | ------- |
+| 50       | 2.044              | 1.8s                | 550          | 31.3% | 0.3%    |
+| 100      | 1.618              | 2.5s                | 400          | 55.4% | 0.3%    |
+| 500      | 700                | 8.7s                | 113          | 81.8% | 0.3%    |
+| 1000     | 383                | 19.3s               | 52           | 93.8% | 0.4%    |
+| 2000     | 198                | 41s                 | 24           | 96.9% | 0.6%    |
 
 ### 4.1.3 Tabela comparativa de performance do REPL
 
-| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/ms) | CPU    | Memória |
-| -------- | ------------------ | ------------------- | ------------- | ------ | ------- |
-| 50       | 106.598            | 0.1s                | 10.000        | 144.0% | 3%      |
-| 100      | 56.927             | 0.1s                | 10.000        | 231%   | 1.8%    |
-| 500      | 9.534              | 0.15s               | 6.666         | 356%   | 0.4%    |
-| 1000     | 4.666              | 0.3s                | 3.333         | 300%   | 0.6%    |
-| 2000     | 2.514              | 0.6s                | 1.666         | 268%   | 1.1%    |
+| Clientes | Requisições (RP/s) | Latência (1k msg/s) | Taxa (msg/s) | CPU    | Memória |
+| -------- | ------------------ | ------------------- | ------------ | ------ | ------- |
+| 50       | 106.598            | 0.1s                | 10.000       | 144.0% | 3%      |
+| 100      | 56.927             | 0.1s                | 10.000       | 231%   | 1.8%    |
+| 500      | 9.534              | 0.15s               | 6.666        | 356%   | 0.4%    |
+| 1000     | 4.666              | 0.3s                | 3.333        | 300%   | 0.6%    |
+| 2000     | 2.514              | 0.6s                | 1.666        | 268%   | 1.1%    |
 
 ## 4.1.4 Gráficos de performance
 
@@ -226,72 +226,73 @@ Os testes foram realizados em pequenas baterias, com diferentes quantidades de c
 | ------------------------------------------ | ------------------------------- | ------------------------------------- |
 | ![Requisições por segundo](charts/rps.png) | ![Latência](charts/latency.png) | ![Taxa de mensagens](charts/rate.png) |
 
+## 4.1.5 Análise dos resultados
+
+Os resultados dos testes apresentam uma vantagem da aplicação quando comparado com implementações alternativas em outras linguagens de programação. A questão principal é a performance da aplicação, por ser escrita em uma linguagem compilada, a aplicação desenvolvida em Go se mostrou mais eficiente para o propósito de distribuição de mensagens, lidando com uma maior quantidade de clientes simultâneos e uma maior quantidade de mensagens por segundo.
+
+Um detalhe dos resultados é a quantidade de utilização de recursos da máquina, com o aumento do número de clientes, a aplicação pode se utilizar de uma maior quantidade de processadores e memória RAM. Contrário das outras linguagens da demonstração, o Go permite a utilização de múltiplas threads de processamento, resultando em uma queda de performance menor quando comparado com as outras linguagens.
+
 ## 4.2 Testes de integração
 
 Realizamos também testes de integração da aplicação foram desenvolvidas 3 demonstrações, para exemplificar os modelos arquiteturais descritos e a performance de cada um:
 
-- Aplicação 1: NodeJS monolítica, responsável por gerenciar os tópicos e distribuir as mensagens para os clientes conectados;
-- Aplicação 2: NodeJS utilizando um sistema de mensageria (Redis) para distribuição de mensagens;
-- Aplicação 3: NodeJS utilizando o serviço de mensageria descrito neste trabalho;
+- Node: NodeJS monolítica, responsável por gerenciar os tópicos e distribuir as mensagens para os clientes conectados;
+- Node + Redis: NodeJS utilizando um sistema de mensageria (Redis) para distribuição de mensagens;
+- Node + REPL: NodeJS utilizando o serviço de mensageria descrito neste trabalho em modo stand-alone;
 
-Assim como no teste anterior, cada bateria consiste em um teste de carga com intervalo de 10 segundos para cada aplicação, onde o intuito foi medir a quantidade de requisições por segundo e a utilização de recursos da máquina, com a quantidade de clientes conectados sendo 50, 100, 500 e 1000 respectivamente.
+Nesse teste, o servidor em NodeJS simula uma aplicação real, com logging e escritas para um banco de dados SQLite. Assim como no teste anterior, cada bateria consiste em um teste de carga com intervalo de 10 segundos para cada aplicação, onde o intuito foi medir a quantidade de requisições por segundo, a latência de distribuição de mensagens e a quantidade de mensagens por segundo enviada, com a quantidade de clientes conectados sendo 50, 100, 500 e 1000 respectivamente.
 
-Os resultados do teste de integração são apresentados na tabela abaixo:
+Os resultados do teste de integração são apresentados nas tabelas abaixo:
 
-## 4.2.1 Primeira bateria de testes - 50 conexões
+### 4.2.1 Node standalone
 
-| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
-| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
-| Aplicação 1 | 50                 | x                       | x                 | x                     |
-| Aplicação 2 | 50                 | x                       | x                 | x                     |
-| Aplicação 3 | 50                 | x                       | x                 | x                     |
+| Clientes | Requisições | Latência (1k msg/s) | Taxa (msg/s) |
+| -------- | ----------- | ------------------- | ------------ |
+| 50       | 984         | 1s                  | 990          |
+| 100      | 557         | 1.4s                | 714          |
+| 500      | 136         | 8.2s                | 120          |
+| 1000     | 67          | 17s                 | 60           |
 
-## 4.2.2 Segunda bateria de testes - 100 conexões
+### 4.2.2 Node + Redis
 
-| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
-| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
-| Aplicação 1 | 100                | x                       | x                 | x                     |
-| Aplicação 2 | 100                | x                       | x                 | x                     |
-| Aplicação 3 | 100                | x                       | x                 | x                     |
+| Clientes | Requisições | Latência (1k msg/s) | Taxa (msg/s) |
+| -------- | ----------- | ------------------- | ------------ |
+| 50       | 3719        | 0.25s               | 3900         |
+| 100      | 2382        | 0.4s                | 2500         |
+| 500      | 646         | 1.5s                | 664          |
+| 1000     | 279         | 3.8s                | 263          |
 
-## 4.2.3 Terceira bateria de testes - 500 conexões
+### 4.2.3 Node + REPL
 
-| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
-| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
-| Aplicação 1 | 500                | x                       | x                 | x                     |
-| Aplicação 2 | 500                | x                       | x                 | x                     |
-| Aplicação 3 | 500                | x                       | x                 | x                     |
+| Clientes | Requisições | Latência (1k msg/s) | Taxa (msg/s) |
+| -------- | ----------- | ------------------- | ------------ |
+| 50       | 2379        | 0.4s                | 2500         |
+| 100      | 2569        | 0.4s                | 2500         |
+| 500      | 2471        | 0.4s                | 2500         |
+| 1000     | 2143        | 0.5s                | 1900         |
 
-## 4.2.4 Quarta bateria de testes - 1000 conexões
+### 4.2.4 Gráficos de performance
 
-| Aplicação   | Número de conexões | Requisições por segundo | Utilização de CPU | Utilização de memória |
-| ----------- | ------------------ | ----------------------- | ----------------- | --------------------- |
-| Aplicação 1 | 1000               | x                       | x                 | x                     |
-| Aplicação 2 | 1000               | x                       | x                 | x                     |
-| Aplicação 3 | 1000               | x                       | x                 | x                     |
+| Requisições por segundo                                | Latência                                    | Taxa de mensagens                                 |
+| ------------------------------------------------------ | ------------------------------------------- | ------------------------------------------------- |
+| ![Requisições por segundo](charts/integration_rps.png) | ![Latência](charts/integration_latency.png) | ![Taxa de mensagens](charts/integration_rate.png) |
 
-## Desenvolvimento (Tarefas)
+## 4.2.5 Análise dos resultados
 
-- [x] Finalização do modelo de arquitetura do sistema;
-- [x] Explicação do protocolo SSE e descrição do motivo pelo qual a gente escolheu ele;
-- [x] Explicação a respeito do funcionamento do sistema (divisão de tópicos para clientes conectados);
-- [x] Tabela comparativa dos principais sistemas de mensageria (Kafka, Redis Pub/Sub, e a nossa aplicação);
-- [x] Descrição dos requisitos não funcionais: limitações do sistema;
-  - Limite do tamanho de mensagens
-  - O sistema vai salvar as mensagens?
-  - O sistema vai ter um limite de conexões?
-- [x] Descrição da implementação do sistema
-  - Como o sistema foi implementado
-  - Como funciona a distribuição de mensagens
-  - Como funciona a divisão de tópicos
+Os resultados dos testes de integração apresentam vantagens para diferentes arquiteturas. No caso da aplicação monolítica, nota-se a queda de performance conforme a quantidade de clientes aumenta, mesmo com uma quantidade baixa de clientes nota-se a diferença com relação a alternativa utilizando o Redis. Um ponto que contribuí para essa diferença de performance é a natureza assíncrona de publicação de mensagem no Redis, liberando o servidor para processar outras requisições enquanto a mensagem é eventualmente distribuída para os clientes.
 
-## Tarefas (escrita)
+A arquitetura utilizando um sistema de mensageria como o Redis possui uma eventual limitação: Por conta da distribuição de mensagens ser realizada diretamente pelo servidor Node, a quantidade de clientes conectados é limitada pela capacidade de processamento do servidor. Isso pode ser um problema para aplicações que necessitam de uma grande quantidade de clientes conectados simultaneamente.
 
-- [ ] Resultados, análise e discussão:
-  - [x] Finalização da implementação do sistema;
-  - [x] Aplicações demo para testes de desempenho;
-  - [ ] Dados dos testes de desempenho;
-  - [ ] Análise dos dados dos testes de desempenho;
-  - [ ] Discussão dos resultados (quantitativo): performance do sistema e escalabilidade;
-  - [ ] Discussão dos resultados (qualitativo): facilidade de implementação e manutenção;
-- [ ] Conclusão
+O problema dessa arquitetura é notado quanto comparamos diretamente com a arquitetura utilizando o serviço de mensageria desenvolvido neste trabalho. A distribuição de mensagens é feita por outro servidor, o que permite que o servidor Node se concentre apenas em lidar com as regras de negócio, como salvar as mensagens no banco de dados e realizar outros processamentos. Isso permite que o servidor processe com uma maior quantidade de requisições por não precisar executar a distribuição de mensagens.
+
+Outro detalhe a ser mencionado para o teste de integração é a pequena variação de requisições por segundo, latência e taxa de mensagens com a arquitetura utilizando o NodeJS com o REPL, onde a limitação foi a quantidade de requisições que o servidor em Node consegue enviar para o REPL.
+
+Apesar das vantagens quantitativas da implementação dessa arquitetura, temos também vantagens qualitativas, como a facilidade de implementação e manutenção. A implementação de uma arquitetura distribuída utilizando o REPL é mais simples do que a implementação de uma arquitetura utilizando um sistema de mensageria como o Redis, uma vez que o REPL é responsável por gerenciar a distribuição de mensagens para os clientes conectados, e o servidor Node é responsável apenas por publicar as mensagens para o REPL.
+
+## 5. Conclusão
+
+O objetivo deste trabalho foi apresentar uma aplicação alternativa para elaboração de aplicações web com recursos em tempo real, simplificando a implementação de tais recursos no lado do cliente e do servidor. Além da aplicação, foram apresentados os resultados de testes de desempenho e escalabilidade, comparando a aplicação desenvolvida com modelos de arquitetura padrões para esse tipo de problema.
+
+A aplicação desenvolvida neste trabalho apresenta uma alternativa para aplicações web que necessitam de recursos em tempo real, como notificações e atualizações de estado. A aplicação desenvolvida se mostrou mais eficiente para o propósito de distribuição de mensagens, lidando com uma maior quantidade de clientes simultâneos e uma maior quantidade de mensagens por segundo.
+
+Apesar de não ser completa para utilização em cenários reais, necessitando de estratégias de autenticação e autorização, regras de publicação de mensagens e outras necessidades de segurança, a aplicação apresenta uma estratégia alternativa a alguns dos padrões que resultam ganhos significativos de performance e escalabilidade.
