@@ -154,7 +154,7 @@ A aplicação pode ser executada em dois modos, sendo eles _standalone_ e em clu
 
 Em modo cluster a aplicação executa em várias máquinas, e é possível adicionar mais nós ao cluster. Nesse modo a aplicação conta com um processo de replicação de mensagens entre os nós utilizando o Raft como protocolo de consenso, garantindo a consistência entre os nós e a entrega das mensagens para os tópicos. Cada um dos modos conta com prós e contras, sendo o modo stand-alone mais eficiente para publicação de mensagens, e o modo cluster suportando mais conexões.
 
-## 3.7.1 Estruturas de distribuição de mensagens
+### 3.7.1 Estruturas de distribuição de mensagens
 
 Durante o desenvolvimento, um dos principais pontos de atenção era o desempenho e eficiência da aplicação, uma vez que ela lida com uma grande quantidade de dados e precisa ser escalável. Para isso, foram realizados testes de desempenho para avaliar estruturas alternativas de concorrência e distribuição de mensagens.
 
