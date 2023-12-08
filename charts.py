@@ -10,9 +10,9 @@ class LoadTest:
         python_rps = [2044, 1618, 700, 383, 192]
         repl_rps = [106598, 56927, 9534, 4666, 2514]
 
-        plt.plot(clients, node_rps, label="NodeJS")
-        plt.plot(clients, python_rps, label="Python")
-        plt.plot(clients, repl_rps, label="REPL")
+        plt.plot(clients, node_rps, label="NodeJS", color="#000000", linestyle="--")
+        plt.plot(clients, python_rps, label="Python", color="#707070", linestyle="--")
+        plt.plot(clients, repl_rps, label="REPL", color="#B0B0B0", linestyle="--")
 
         plt.xlabel("Clientes conectados")
         plt.ylabel("Requisições por segundo (maior é melhor)")
@@ -29,9 +29,11 @@ class LoadTest:
         python_latency = [1.8, 2.5, 8.7, 19.3, 31]
         repl_latency = [0.1, 0.1, 0.15, 0.3, 0.6]
 
-        plt.plot(clients, node_latency, label="NodeJS")
-        plt.plot(clients, python_latency, label="Python")
-        plt.plot(clients, repl_latency, label="REPL")
+        plt.plot(clients, node_latency, label="NodeJS", color="#000000", linestyle="--")
+        plt.plot(
+            clients, python_latency, label="Python", color="#707070", linestyle="--"
+        )
+        plt.plot(clients, repl_latency, label="REPL", color="#B0B0B0", linestyle="--")
 
         plt.xlabel("Clientes conectados")
         plt.ylabel("Latência (menor é melhor)")
@@ -48,9 +50,9 @@ class LoadTest:
         python_rate = [550, 400, 113, 52, 24]
         repl_rate = [10_000, 10_000, 6_666, 3_333, 1_666]
 
-        plt.plot(clients, node_rate, label="NodeJS")
-        plt.plot(clients, python_rate, label="Python")
-        plt.plot(clients, repl_rate, label="REPL")
+        plt.plot(clients, node_rate, label="NodeJS", color="#000000", linestyle="--")
+        plt.plot(clients, python_rate, label="Python", color="#707070", linestyle="--")
+        plt.plot(clients, repl_rate, label="REPL", color="#B0B0B0", linestyle="--")
 
         plt.xlabel("Clientes conectados")
         plt.ylabel("Mensagens por segundo (maior é melhor)")
@@ -78,9 +80,9 @@ class IntegrationTest:
         redis = [3719, 2382, 646, 279]
         repl = [2379, 2569, 2471, 2143]
 
-        plt.plot(clients, standalone, label="Node")
-        plt.plot(clients, redis, label="Node + Redis")
-        plt.plot(clients, repl, label="Node + REPL")
+        plt.plot(clients, standalone, label="Node", color="#000000", linestyle="--")
+        plt.plot(clients, redis, label="Node + Redis", color="#707070", linestyle="--")
+        plt.plot(clients, repl, label="Node + REPL", color="#B0B0B0", linestyle="--")
 
         plt.xlabel("Clientes conectados")
         plt.ylabel("Requisições por segundo (maior é melhor)")
@@ -98,9 +100,9 @@ class IntegrationTest:
         redis = [0.25, 0.4, 1.5, 3.8]
         repl = [0.4, 0.4, 0.4, 0.4]
 
-        plt.plot(clients, standalone, label="Node")
-        plt.plot(clients, redis, label="Node + Redis")
-        plt.plot(clients, repl, label="Node + REPL")
+        plt.plot(clients, standalone, label="Node", color="#000000", linestyle="--")
+        plt.plot(clients, redis, label="Node + Redis", color="#707070", linestyle="--")
+        plt.plot(clients, repl, label="Node + REPL", color="#B0B0B0", linestyle="--")
 
         plt.xlabel("Clientes conectados")
         plt.ylabel("Latência (menor é melhor)")
@@ -118,9 +120,9 @@ class IntegrationTest:
         redis = [3900, 2500, 664, 263]
         repl = [2500, 2500, 2500, 2500]
 
-        plt.plot(clients, standalone, label="Node")
-        plt.plot(clients, redis, label="Node + Redis")
-        plt.plot(clients, repl, label="Node + REPL")
+        plt.plot(clients, standalone, label="Node", color="#000000", linestyle="--")
+        plt.plot(clients, redis, label="Node + Redis", color="#707070", linestyle="--")
+        plt.plot(clients, repl, label="Node + REPL", color="#B0B0B0", linestyle="--")
 
         plt.xlabel("Clientes conectados")
         plt.ylabel("Mensagens por segundo (maior é melhor)")
